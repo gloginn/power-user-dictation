@@ -1,0 +1,27 @@
+[project]
+name = "power-user-dictation"
+version = "0.1.0"
+description = "Voice-to-text transcription with automatic typing"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+
+dependencies = [
+    "faster-whisper==1.2.1",
+    "sounddevice==0.5.1",
+    "numpy==2.5.1",
+]
+
+[project.optional-dependencies]
+gpu = [
+    "nvidia-cublas-cu12==12.8.4.1",
+    "nvidia-cudnn-cu12==9.10.2.21",
+]
+
+# `pip install .` is only here to resolve dependencies into the venv. Without
+# these empty lists, setuptools auto-discovery treats src/ as a package root
+# and copies everything under it into site-packages as top-level modules,
+# where the copies go stale and shadow names as common as `config`.
+[tool.setuptools]
+packages = []
+py-modules = []

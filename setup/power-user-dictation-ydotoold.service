@@ -1,0 +1,38 @@
+[Unit]
+Description=Ydotool daemon for power-user-dictation
+After=systemd-udevd.service
+Requires=systemd-udevd.service
+
+[Service]
+User=power-user-dictation-input
+Group=power-user-dictation-input
+RuntimeDirectory=power-user-dictation
+
+ExecStart=ydotoold \
+  --socket-path=/run/power-user-dictation/ydotool.sock \
+  --socket-perm=0660 \
+  --mouse-off
+
+Restart=always
+RestartSec=1
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+
+DeviceAllow=/dev/uinput rw
+DevicePolicy=closed
+
+RestrictAddressFamilies=AF_UNIX
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+CapabilityBoundingSet=
+SystemCallFilter=@system-service
+
+[Install]
+WantedBy=multi-user.target

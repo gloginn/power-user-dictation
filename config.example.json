@@ -1,0 +1,27 @@
+{
+  "$schema": "config.schema.json",
+  "silent_mode": false,
+  "device": "cpu",
+  "cuda": {
+    "model": "turbo",
+    "compute_type": "float16",
+    "beam_size": 5
+  },
+  "cpu": {
+    "model": "base",
+    "compute_type": "int8",
+    "beam_size": 1
+  },
+  "language": "en",
+  "max_recording_sec": 120,
+  "preopen_microphone": false,
+  "paste": {
+    "tools": ["wtype", "ydotool"],
+    "key_delay_ms": 30,
+    "pre_delay_ms": 100
+  },
+  "initial_prompts": {
+    "en": "Working on a Linux terminal"
+  },
+  "hotwords": "systemd sudo apt kernel bash ssh"
+}

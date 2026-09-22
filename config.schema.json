@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "config.schema.json",
+  "title": "Power User Dictation Configuration",
+  "description": "Configuration for the power-user-dictation voice-to-text daemon",
+  "type": "object",
+  "definitions": {
+    "device_config": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Whisper model. Tested recommendations: 'base' (CPU), 'turbo' or 'distil-large-v3' (CUDA).",
+          "enum": [
+            "tiny",
+            "tiny.en",
+            "base",
+            "base.en",
+            "small",
+            "small.en",
+            "medium",
+            "medium.en",
+            "large-v1",
+            "large-v2",
+            "large-v3",
+            "turbo",
+            "distil-large-v3",
+            "distil-large-v3.5",
+            "distil-large-v2",
+            "distil-medium.en",
+            "distil-small.en"
+          ]
+        },
+        "compute_type": {
+          "type": "string",
+          "description": "Precision type for model computation",
+          "enum": ["float16", "float32", "int8", "int8_float16"]
+        },
+        "beam_size": {
+          "type": "integer",
+          "description": "Beam search width (1=greedy/fast, higher=better quality)",
+          "minimum": 1,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "silent_mode": {
+      "type": "boolean",
+      "description": "Disable all desktop notifications, including errors. Logging remains enabled. Restart the daemon after changing this setting.",
+      "default": false
+    },
+    "$schema": {
+      "type": "string",
+      "description": "Schema reference for editor validation"
+    },
+    "log_level": {
+      "type": "string",
+      "description": "Logging level for the daemon",
+      "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+      "default": "INFO"
+    },
+    "device": {
+      "type": "string",
+      "description": "Preferred compute device for inference",
+      "enum": ["cuda", "cpu"],
+      "default": "cpu"
+    },
+    "cuda": {
+      "$ref": "#/definitions/device_config",
+      "description": "Settings when running on CUDA (GPU)",
+      "default": {
+        "model": "turbo",
+        "compute_type": "float16",
+        "beam_size": 5
+      }
+    },
+    "cpu": {
+      "$ref": "#/definitions/device_config",
+      "description": "Settings when running on CPU",
+      "default": {
+        "model": "base",
+        "compute_type": "int8",
+        "beam_size": 1
+      }
+    },
+    "language": {
+      "type": "string",
+      "description": "Whisper language code for transcription (e.g., 'en', 'pt', 'haw', 'yue').",
+      "pattern": "^[a-z]{2,3}$",
+      "default": "en"
+    },
+    "max_recording_sec": {
+      "type": "integer",
+      "description": "Maximum recording duration in seconds",
+      "default": 120,
+      "minimum": 1
+    },
+    "preopen_microphone": {
+      "type": "boolean",
+      "description": "Open the sound device when the daemon starts and hold it, instead of opening it on each toggle. The held stream stays stopped between recordings, so the microphone is off until you press the hotkey and other applications can still use it. Recording starts faster and more steadily, which keeps the first word intact. The 'preopen on|off' client command changes it on a running daemon. Restart the daemon after changing this setting.",
+      "default": false
+    },
+    "paste": {
+      "type": "object",
+      "description": "Paste behavior settings",
+      "properties": {
+        "tools": {
+          "type": "array",
+          "description": "Paste tools tried in order, first success wins. 'wtype' needs a compositor with virtual-keyboard-unstable-v1 (niri, wlroots); 'ydotool' works anywhere but needs ydotoold.",
+          "items": {
+            "type": "string",
+            "enum": ["wtype", "ydotool"]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "default": ["wtype", "ydotool"]
+        },
+        "key_delay_ms": {
+          "type": "integer",
+          "description": "Delay between keystrokes (ms), ydotool only",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "pre_delay_ms": {
+          "type": "integer",
+          "description": "Delay before paste to let trigger keys release (ms)",
+          "default": 100,
+          "minimum": 0,
+          "maximum": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "initial_prompts": {
+      "type": "object",
+      "description": "Per-language initial prompts to bias Whisper toward domain vocabulary. Keys are Whisper language codes.",
+      "additionalProperties": {
+        "type": "string",
+        "description": "Context prompt for this language"
+      },
+      "examples": [
+        {
+          "en": "Technical terms: systemd, sudo, ssh",
+          "pt": "Termos técnicos: systemd, sudo, ssh"
+        }
+      ]
+    },
+    "hotwords": {
+      "type": "string",
+      "description": "Space-separated hotwords/hints for faster-whisper (e.g., 'systemd sudo ssh')"
+    },
+    "paths": {
+      "type": "object",
+      "description": "Runtime path configuration",
+      "properties": {
+        "socket_path": {
+          "type": "string",
+          "description": "Unix socket path for client-server communication. Defaults to $XDG_RUNTIME_DIR/power-user-dictation.sock"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
