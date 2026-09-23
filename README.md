@@ -7,6 +7,12 @@ A minimal, auditable, no-UI speech-to-text daemon for Linux power users. Intende
 - **Bring your own UI** - no window of its own; a bar or widget reads its state and sends commands over the same Unix socket
 
 **Linux only** - uses Unix sockets, wtype or ydotool for paste simulation, wl-copy/xclip for clipboard.
+  
+  
+https://github.com/user-attachments/assets/8a38ba99-c999-45db-844a-d77fc4baefbd  
+
+*Running under niri with a DankMaterialShell bar widget. The widget is my own setup and isn't included.*
+
 
 ## Installation
 
